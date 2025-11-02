@@ -104,7 +104,7 @@ packages:
     source: hosted
     version: "2.2.9"
   better_networking:
-    dependency: transitive
+    dependency: "direct main"
     description:
       path: "packages/better_networking"
       relative: true

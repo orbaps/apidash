@@ -1,4 +1,3 @@
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:better_networking/better_networking.dart';
 import '../consts.dart';
 

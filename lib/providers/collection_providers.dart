@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'package:apidash_core/apidash_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:apidash/consts.dart';
 import 'package:apidash/terminal/terminal.dart';
-import 'package:better_networking/better_networking.dart';
+import 'package:better_networking/better_networking.dart' as bn;
 import 'providers.dart';
 import '../models/models.dart';
 import '../services/services.dart';
@@ -216,8 +215,8 @@ class CollectionStateNotifier
     APIType? apiType,
     String? id,
     HTTPVerb? method,
-    AuthModel? authModel,
-    AuthInheritanceType? authInheritanceType,
+    bn.AuthModel? authModel,
+    bn.AuthInheritanceType? authInheritanceType,
     String? url,
     String? name,
     String? description,
@@ -254,7 +253,7 @@ class CollectionStateNotifier
             apiType: apiType,
             name: name ?? currentModel.name,
             description: description ?? currentModel.description,
-            httpRequestModel: const HttpRequestModel(),
+            httpRequestModel: const bn.HttpRequestModel(),
             aiRequestModel: null),
         APIType.ai => currentModel.copyWith(
             apiType: apiType,
@@ -627,15 +626,15 @@ class CollectionStateNotifier
     // };
   }
 
-  HttpRequestModel getSubstitutedHttpRequestModel(
-      HttpRequestModel httpRequestModel) {
+  bn.HttpRequestModel getSubstitutedHttpRequestModel(
+      bn.HttpRequestModel httpRequestModel) {
     var envMap = ref.read(availableEnvironmentVariablesStateProvider);
     var activeEnvId = ref.read(activeEnvironmentIdStateProvider);
     var environments = ref.read(environmentsStateNotifierProvider);
 
     // Handle auth inheritance
-    HttpRequestModel processedRequestModel = httpRequestModel;
-    if (httpRequestModel.authInheritanceType == AuthInheritanceType.environment && 
+    bn.HttpRequestModel processedRequestModel = httpRequestModel;
+    if (httpRequestModel.authInheritanceType == bn.AuthInheritanceType.environment && 
         activeEnvId != null && 
         environments != null && 
         environments[activeEnvId] != null) {
