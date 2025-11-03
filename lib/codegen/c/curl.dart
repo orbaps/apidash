@@ -68,7 +68,11 @@ int main() {
   {% if headers %}{% for header, value in headers %}  headers = curl_slist_append(headers,"{{header}}: {{value}}");\n  {% endfor %}
   {% endif %}  curl_easy_setopt(curl, CURLOPT_HTTPHEADER, headers);
 """;
-  String kTemplateQueryParam = """""";
+  String kTemplateQueryParam = """
+    {% if params %}
+    curl_easy_setopt(curl, CURLOPT_URL, "{{url}}?{{params}}");
+    {% endif %}
+""";
 
   String kTemplateRequest =
       """{% if method != "GET" and method != "POST" %}\n    curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "{{method}}");{% endif %}""";
@@ -101,7 +105,13 @@ int main() {
         requestModel.enabledParams,
       );
 
-      Uri? uri = rec.$1;
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+
+      Uri uri = rec.$1!;
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
@@ -125,9 +135,9 @@ int main() {
           requestModel.hasTextData ||
           requestModel.hasJsonData) {
         var headers = requestModel.enabledHeadersMap;
-        // if (requestModel.hasFormData) {
-        //   headers.putIfAbsent("Content-Type", () => "multipart/form-data");
-        // }
+        if (requestModel.hasFormData) {
+          headers.putIfAbsent("Content-Type", () => "multipart/form-data");
+        }
         if (requestModel.hasTextData || requestModel.hasJsonData) {
           headers.putIfAbsent(
               kHeaderContentType, () => requestModel.bodyContentType.header);
@@ -162,7 +172,16 @@ int main() {
         var params = uri.queryParameters;
         if (params.isNotEmpty) {
           var templateQueryParam = jj.Template(kTemplateQueryParam);
-          result += templateQueryParam.render({"params": params});
+          // Convert params map to query string format
+          List<String> paramList = [];
+          params.forEach((key, value) {
+            paramList.add('$key=$value');
+          });
+          String queryString = paramList.join('&');
+          result += templateQueryParam.render({
+            "url": uri.toString(),
+            "params": queryString
+          });
         }
       }
       var headers = requestModel.enabledHeadersMap;

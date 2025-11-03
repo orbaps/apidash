@@ -68,9 +68,15 @@ public class Main {
         requestModel.url,
         requestModel.enabledParams,
       );
-
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
       // uri is already generated based on url and enabled request params
-      Uri? uri = rec.$1;
+      Uri uri = rec.$1!;
 
       // this is the common import and will be imported for every generated code snippet
       result += kStringUnirestImports;

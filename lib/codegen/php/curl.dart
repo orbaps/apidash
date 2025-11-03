@@ -98,8 +98,14 @@ echo $response . "\n";
         requestModel.url,
         requestModel.enabledParams,
       );
-
-      Uri? uri = rec.$1;
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
+      Uri uri = rec.$1!;
 
       //renders starting template
       var templateStart = jj.Template(kTemplateStart);

@@ -41,7 +41,11 @@ PAYLOAD = {
 """;
 
   final String kTemplateFormParamsWithoutFile = """
-PAYLOAD = URI.encode_www_form({\n{% for param in params %}  "{{ param.name }}" => "{{ param.value }}",\n{% endfor %}})\n\n
+PAYLOAD = URI.encode_www_form({
+{% for param in params %}  "{{ param.name }}" => "{{ param.value }}",
+{% endfor %}})
+
+
 """;
 
   final String kTemplateConnection = """
@@ -93,8 +97,14 @@ puts "Response Body: #{response.body}"
         requestModel.url,
         requestModel.enabledParams,
       );
-
-      Uri? uri = rec.$1;
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
+      Uri uri = rec.$1!;
 
       var url = stripUriParams(uri);
 

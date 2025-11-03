@@ -123,7 +123,15 @@ multipart/form-data; boundary={{boundary}}''';
         url,
         requestModel.enabledParams,
       );
-      Uri? uri = rec.$1;
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
+      Uri uri = rec.$1!;
+
       var method = requestModel.method;
       var requestBody = requestModel.body;
       if (requestModel.bodyContentType == ContentType.json && requestBody?.isNotEmpty == true){

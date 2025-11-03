@@ -107,11 +107,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
       String url = requestModel.url;
       var rec = getValidRequestUri(url, requestModel.enabledParams);
-      Uri? uri = rec.$1;
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
+      Uri uri = rec.$1!;
 
       var headers = requestModel.enabledHeadersMap;
       result += jj.Template(kTemplateStart).render({
-        "url": uri,
+        "url": uri.toString(),
         "isHttps": uri.scheme == "https" ? true : false,
         'hasJsonBody': requestModel.hasJsonData,
         'hasForm': requestModel.hasFormData,

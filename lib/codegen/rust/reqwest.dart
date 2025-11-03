@@ -91,7 +91,15 @@ class RustReqwestCodeGen {
         url,
         requestModel.enabledParams,
       );
-      Uri? uri = rec.$1;
+      
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+      
+      Uri uri = rec.$1!;
+
       var templateStartUrl = jj.Template(kTemplateStart);
       result += templateStartUrl.render({
         "url": stripUriParams(uri),

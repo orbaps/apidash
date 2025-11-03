@@ -44,11 +44,17 @@ puts "Response Code: #{response.code}"
         requestModel.enabledParams,
       );
 
-      Uri? uri = rec.$1;
+      // Check if there was an error in parsing the URI
+      if (rec.$2 != null) {
+        // Return null to indicate error in code generation
+        return null;
+      }
+
+      Uri uri = rec.$1!;
 
       var templateStart = jj.Template(kTemplateStart);
       result += templateStart.render({
-        "url": uri.query.isEmpty ? stripUriParams(uri) : uri,
+        "url": uri.query.isEmpty ? stripUriParams(uri) : uri.toString(),
         "method": requestModel.method.name.capitalize(),
         "check": uri.scheme,
       });
